@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# OpenAgent runtime data (per ARCHITECTURE.md Section 17.2 / 21)
+.openagent/sessions/
+
+# Environment / credentials
+.env
+.env.local
+
+# OS/editor cruft
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# npm
+*.tgz
+npm-debug.log*
