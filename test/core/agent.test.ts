@@ -185,4 +185,36 @@ describe("Agent", () => {
     // ensure the tool was executed properly with reconstructed input
     expect(result.toolCallsExecuted[0].input).toEqual({ path: "x.ts" });
   });
+  it("TEST 8 — injects attached skills metadata into systemPrompt", async () => {
+    provider.queueResponse({
+      content: [{ type: "text", text: "Hello!" }],
+      stopReason: "end_turn",
+      usage: { inputTokens: 5, outputTokens: 3 },
+      raw: {},
+    });
+
+    config.skills = [
+      {
+        name: "test-skill-metadata",
+        description: "This is a skill injected into the prompt.",
+        instructions: "Secret body",
+        dirPath: "/tmp",
+        skillMdPath: "/tmp/SKILL.md",
+        scope: "project",
+        hasScripts: false,
+        hasExamples: false,
+        hasResources: false,
+      }
+    ];
+
+    const agent = new Agent(config, provider, createMockToolExecutor(), eventBus);
+    await agent.run("say hello", []);
+
+    expect(provider.getCalls().length).toBe(1);
+    const req = provider.getCalls()[0];
+    
+    expect(req.systemPrompt).toContain("test-skill-metadata");
+    expect(req.systemPrompt).toContain("This is a skill injected into the prompt.");
+    expect(req.systemPrompt).not.toContain("Secret body");
+  });
 });

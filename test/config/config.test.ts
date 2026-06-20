@@ -13,8 +13,8 @@ describe("Config Loading", () => {
   it("TEST 1 — loadConfig with no project config returns defaults", () => {
     (fs.existsSync as any).mockReturnValue(false);
     const result = loadConfig("/test-root");
-    expect(result.defaultModel.providerId).toBe("anthropic");
-    expect(result.defaultModel.modelId).toBe("claude-haiku-4-5");
+    expect(result.defaultModel.providerId).toBe("google");
+    expect(result.defaultModel.modelId).toBe("gemini-2.5-flash");
   });
 
   it("TEST 2 — loadConfig merges project config over defaults", () => {

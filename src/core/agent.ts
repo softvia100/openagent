@@ -2,14 +2,15 @@ import { Provider, ModelMessage, CompletionResponse, ContentBlock } from "../pro
 import { ToolExecutor } from "./tool-executor.js";
 import { Tool, ToolCallRecord, ToolExecutionContext } from "./tools/types.js";
 import { AgentEventBus } from "./events.js";
-
+import { Skill } from "../skills/types.js";
+import { composeSystemPrompt } from "../skills/prompt.js";
 export interface AgentConfig {
   id: string;
   role: "manager" | "team-lead" | "micro-agent";
   systemPrompt: string;
   model: { providerId: string; modelId: string };
   tools: Tool[];
-  skills: never[]; // always empty array for Phase 1 — skills are Phase 3
+  skills: Skill[];
   maxTurns?: number;
   maxTokensPerTurn?: number;
 }
@@ -240,8 +241,7 @@ export class Agent {
   }
 
   private buildSystemPrompt(): string {
-    // TODO(Phase 3): inject skill content here — ARCHITECTURE.md Section 8.4
-    return this.config.systemPrompt;
+    return composeSystemPrompt(this.config.systemPrompt, this.config.skills);
   }
 
   private buildToolExecutionContext(): ToolExecutionContext {
